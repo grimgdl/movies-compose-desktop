@@ -5,16 +5,15 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.onClick
-import androidx.compose.material.Button
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import getDatabaseBuilder
@@ -30,15 +29,44 @@ import ui.CardMovie
 fun MoviesScreen() {
 
 
-    val db = remember {  getRoomDatabase(getDatabaseBuilder()) }
+    val db = remember { getRoomDatabase(getDatabaseBuilder()) }
+    var dialogShowing by remember { mutableStateOf(false) }
 
-    Column {
+    Box (
 
-        SectionHome(db.MovieDao())
+        modifier = Modifier.fillMaxSize()
+    ){
 
-        SectionFamily(db.MovieDao())
+        Column {
+
+            SectionHome(db.MovieDao())
+
+            AlertMovies(
+                daoMovie = db.MovieDao(),
+                dialogShowing = dialogShowing,
+                onConfirm = {
+                    dialogShowing = false
+                },
+                onDismiss = {
+                    dialogShowing = false
+                }
+
+            )
+
+        }
+
+        FloatingActionButton(
+            onClick = {
+                dialogShowing = true
+            },
+            modifier = Modifier.align(alignment = Alignment.BottomEnd)
+                .padding(16.dp)
+        ){
+            Icon(imageVector = Icons.Filled.Add, contentDescription = null)
+        }
 
     }
+
 
 
 }
@@ -51,11 +79,12 @@ fun SectionHome(daoMovie: MovieDao) {
     val list by daoMovie.getMovies().collectAsState(initial = emptyList())
 
     Column {
-        Text(text="Home")
-        LazyRow{
+        Text(text = "Home")
+
+        LazyRow {
 
 
-            items(items = list, key = {movie -> movie.id}) { movie ->
+            items(items = list, key = { movie -> movie.id }) { movie ->
 
                 var visible by remember { mutableStateOf(true) }
 
@@ -83,7 +112,6 @@ fun SectionHome(daoMovie: MovieDao) {
                 }
 
 
-
             }
 
 
@@ -93,54 +121,82 @@ fun SectionHome(daoMovie: MovieDao) {
 
 
 @Composable
-fun SectionFamily(daoMovie: MovieDao) {
+fun AlertMovies(
+    daoMovie: MovieDao,
+    dialogShowing: Boolean,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
 
     var name by remember { mutableStateOf("") }
     var url by remember { mutableStateOf("") }
-    Column {
+
+    if (dialogShowing) {
+        AlertDialog(
+            onDismissRequest = {},
+            text = {
+                Column {
 
 
-        OutlinedTextField(
-            value = name,
-            onValueChange = {name = it},
-            label = {
-                Text("Nombre")
-            }
-        )
-
-        OutlinedTextField(
-            value = url,
-            onValueChange = { url = it},
-            label = {
-                Text("url")
-            }
-        )
-
-
-        Button(
-            onClick = {
-
-                CoroutineScope(Dispatchers.IO).launch {
-
-                    daoMovie.insertMovie(
-                        Movie(
-                            name = name,
-                            url = url
-                        )
+                    OutlinedTextField(
+                        value = name,
+                        onValueChange = { name = it },
+                        label = {
+                            Text("Nombre")
+                        }
                     )
 
-
-                    name = ""
-                    url = ""
+                    OutlinedTextField(
+                        value = url,
+                        onValueChange = { url = it },
+                        label = {
+                            Text("url")
+                        }
+                    )
 
                 }
 
             },
-            enabled = name.isNotBlank().and(url.isNotBlank())
-        ){
-            Text("Add")
-        }
+            dismissButton = {
+                TextButton(
+                    onClick = { onDismiss() }
+                ){
+                    Text("Dismiss")
+                }
+            },
+            confirmButton = {
 
+                TextButton(
+                    onClick = {
+
+                        CoroutineScope(Dispatchers.IO).launch {
+
+                            daoMovie.insertMovie(
+                                Movie(
+                                    name = name,
+                                    url = url
+                                )
+                            )
+
+
+                            name = ""
+                            url = ""
+
+                        }
+
+                        onConfirm()
+
+
+                    },
+                    enabled = name.isNotBlank().and(url.isNotBlank())
+                ){
+
+                    Text("Confirm")
+                }
+            }
+        )
     }
+
+
 
 }
