@@ -2,8 +2,10 @@ package ui.pages
 
 import MovieDao
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -16,6 +18,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import getDatabaseBuilder
 import getRoomDatabase
 import kotlinx.coroutines.CoroutineScope
@@ -131,71 +135,100 @@ fun AlertMovies(
     var name by remember { mutableStateOf("") }
     var url by remember { mutableStateOf("") }
 
-    if (dialogShowing) {
-        AlertDialog(
-            onDismissRequest = {},
-            text = {
-                Column {
 
+    if (dialogShowing){
+        Dialog(
+            onDismissRequest = {onDismiss()}
+        ) {
+            Surface(
+                shape = MaterialTheme.shapes.medium,
+                elevation = 24.dp
+            ) {
+
+                Column (
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+
+                ){
+
+                    Text("New movie")
+
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
                         label = {
                             Text("Nombre")
-                        }
+                        },
+                        modifier = Modifier.fillMaxWidth()
                     )
+
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     OutlinedTextField(
                         value = url,
                         onValueChange = { url = it },
                         label = {
                             Text("url")
-                        }
+                        },
+                        modifier = Modifier.fillMaxWidth()
                     )
 
-                }
+                    Spacer(modifier = Modifier.height(16.dp))
 
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { onDismiss() }
-                ){
-                    Text("Dismiss")
-                }
-            },
-            confirmButton = {
-
-                TextButton(
-                    onClick = {
-
-                        CoroutineScope(Dispatchers.IO).launch {
-
-                            daoMovie.insertMovie(
-                                Movie(
-                                    name = name,
-                                    url = url
-                                )
-                            )
-
-
-                            name = ""
-                            url = ""
-
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(8.dp)
+                        ,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        TextButton(
+                            onClick = { onDismiss() }
+                        ){
+                            Text("Dismiss")
                         }
 
-                        onConfirm()
+                        TextButton(
+                            onClick = {
+                                CoroutineScope(Dispatchers.IO).launch {
+
+                                    daoMovie.insertMovie(
+                                        Movie(
+                                            name = name,
+                                            url = url
+                                        )
+                                    )
 
 
-                    },
-                    enabled = name.isNotBlank().and(url.isNotBlank())
-                ){
+                                    name = ""
+                                    url = ""
 
-                    Text("Confirm")
+                                }
+                                onConfirm()
+
+                            },
+                            enabled = name.isNotBlank().and(url.isNotBlank())
+                        ) {
+                            Text("Create")
+                        }
+                    }
                 }
+
+
+
+
+
+
             }
-        )
+
+
+        }
     }
+
+
+
 
 
 
