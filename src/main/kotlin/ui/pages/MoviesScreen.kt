@@ -2,6 +2,10 @@ package ui.pages
 
 import MovieDao
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -99,7 +103,11 @@ fun SectionHome(daoMovie: MovieDao) {
                 }
 
                 AnimatedVisibility(
-                    visible = visible && animationIn
+                    visible = visible && animationIn,
+                    enter = fadeIn() + slideInVertically(
+                        animationSpec = tween()
+                    ),
+                    exit = fadeOut()
                 ) {
                     CardMovie(
                         text = movie.name,
