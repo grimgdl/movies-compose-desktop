@@ -40,7 +40,7 @@ fun App() {
                         screen = Screens.Nothing
 
                     } ){
-                        Text("Nothing")
+                        Text("Animations")
                     }
 
                     Button(onClick = {

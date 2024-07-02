@@ -2,15 +2,10 @@ package ui.pages
 
 import MovieDao
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.onClick
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -19,11 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import getDatabaseBuilder
 import getRoomDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import models.Movie
 import ui.CardMovie
@@ -36,10 +31,11 @@ fun MoviesScreen() {
     val db = remember { getRoomDatabase(getDatabaseBuilder()) }
     var dialogShowing by remember { mutableStateOf(false) }
 
+    
     Box (
-
         modifier = Modifier.fillMaxSize()
     ){
+
 
         Column {
 
@@ -76,11 +72,14 @@ fun MoviesScreen() {
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SectionHome(daoMovie: MovieDao) {
 
     val list by daoMovie.getMovies().collectAsState(initial = emptyList())
+
+
+
+
 
     Column {
         Text(text = "Home")
@@ -92,20 +91,27 @@ fun SectionHome(daoMovie: MovieDao) {
 
                 var visible by remember { mutableStateOf(true) }
 
+                var animationIn by remember { mutableStateOf(false) }
+
+                LaunchedEffect(movie.id) {
+
+                    animationIn = true
+                }
+
                 AnimatedVisibility(
-                    visible = visible,
-                    enter = fadeIn(),
-                    exit = fadeOut()
+                    visible = visible && animationIn
                 ) {
                     CardMovie(
                         text = movie.name,
                         url = movie.url,
                         modifier = Modifier.padding(2.dp)
                             .size(200.dp, 200.dp)
-                            .onClick {
+                            .clickable {
+
+                                visible = false
 
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    visible = false
+                                    delay(300)
                                     daoMovie.removeMovie(movie)
 
                                 }
@@ -138,7 +144,7 @@ fun AlertMovies(
 
     if (dialogShowing){
         Dialog(
-            onDismissRequest = {onDismiss()}
+            onDismissRequest = {onDismiss()},
         ) {
             Surface(
                 shape = MaterialTheme.shapes.medium,
@@ -201,9 +207,9 @@ fun AlertMovies(
                                         )
                                     )
 
-
                                     name = ""
                                     url = ""
+
 
                                 }
                                 onConfirm()
@@ -226,9 +232,6 @@ fun AlertMovies(
 
         }
     }
-
-
-
 
 
 
