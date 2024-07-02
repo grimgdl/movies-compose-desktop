@@ -52,5 +52,16 @@ object Utils {
         saveProperties(filePath, properties)
     }
 
+    fun getOsName(): String {
+        val os = System.getProperty("os.name").lowercase(Locale.getDefault())
+        return when {
+            os.contains("win") -> "Windows"
+            os.contains("mac") -> "MacOS"
+            os.contains("nix") || os.contains("nux") || os.contains("aix") -> "Linux"
+            else -> "unknown"
+        }
+
+    }
+
 
 }
