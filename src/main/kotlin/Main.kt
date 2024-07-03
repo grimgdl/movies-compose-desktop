@@ -1,24 +1,27 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.awt.ComposeWindow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import ui.pages.LoginScreen
 import ui.pages.MoviesScreen
 import ui.pages.NothingScreen
+import javax.swing.JFrame
 
 @Composable
 @Preview
-fun App(onCloseRequest: () -> Unit) {
+fun App(window: ComposeWindow, onCloseRequest: () -> Unit) {
     var screen by remember { mutableStateOf(Screens.Movies) }
 
     MaterialTheme {
@@ -31,7 +34,8 @@ fun App(onCloseRequest: () -> Unit) {
             Column{
 
                 CustomTitlebar(
-                    onCloseRequest = onCloseRequest
+                    onCloseRequest = onCloseRequest,
+                    window = window
                 )
 
                 Column(
@@ -95,12 +99,30 @@ enum class Screens {
 
 
 @Composable
-fun CustomTitlebar(onCloseRequest: () -> Unit) {
+fun CustomTitlebar(onCloseRequest: () -> Unit, window: ComposeWindow) {
+
+    var positionX by remember { mutableStateOf(0f) }
+    var positionY by remember { mutableStateOf(0f) }
+
+
     Box(
         modifier = Modifier.fillMaxWidth()
             .height(40.dp)
             .background(Color.DarkGray)
-            .padding(horizontal = 8.dp),
+            .padding(horizontal = 8.dp)
+            .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+
+                    positionX += dragAmount.x
+                    positionY += dragAmount.y
+
+                    val frame = (window as JFrame)
+
+                    frame.setLocation((frame.x + positionX.toInt()), (frame.y  + positionY.toInt()))
+
+                }
+            },
         contentAlignment = Alignment.CenterStart
     ) {
 
@@ -134,7 +156,8 @@ fun main() = application {
         state = WindowState(position = WindowPosition(alignment = Alignment.Center)),
         undecorated = os != "MacOS"
     ) {
-        App(onCloseRequest = ::exitApplication)
+        App(window = window, onCloseRequest = ::exitApplication)
+
 
     }
 }
