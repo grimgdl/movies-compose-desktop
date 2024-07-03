@@ -9,11 +9,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.*
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowPosition
+import androidx.compose.ui.window.WindowState
+import androidx.compose.ui.window.application
 import ui.pages.LoginScreen
 import ui.pages.MoviesScreen
 import ui.pages.NothingScreen
@@ -33,10 +35,12 @@ fun App(window: ComposeWindow, onCloseRequest: () -> Unit) {
 
             Column{
 
-                CustomTitlebar(
-                    onCloseRequest = onCloseRequest,
-                    window = window
-                )
+                if (window.isUndecorated ){
+                    CustomTitlebar(
+                        onCloseRequest = onCloseRequest,
+                        window = window
+                    )
+                }
 
                 Column(
                     modifier = Modifier.padding(16.dp)

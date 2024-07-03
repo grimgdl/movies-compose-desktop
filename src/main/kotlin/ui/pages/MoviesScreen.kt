@@ -82,9 +82,6 @@ fun SectionHome(daoMovie: MovieDao) {
     val list by daoMovie.getMovies().collectAsState(initial = emptyList())
 
 
-
-
-
     Column {
         Text(text = "Home")
 
@@ -113,19 +110,16 @@ fun SectionHome(daoMovie: MovieDao) {
                         text = movie.name,
                         url = movie.url,
                         modifier = Modifier.padding(2.dp)
-                            .size(200.dp, 200.dp)
-                            .clickable {
+                            .size(200.dp, 200.dp),
+                        onClickRemove = {
+                            visible = false
 
-                                visible = false
-
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    delay(300)
-                                    daoMovie.removeMovie(movie)
-
-                                }
-
+                            CoroutineScope(Dispatchers.IO).launch {
+                                delay(300)
+                                daoMovie.removeMovie(movie)
 
                             }
+                        }
                     )
                 }
 
@@ -136,6 +130,11 @@ fun SectionHome(daoMovie: MovieDao) {
         }
     }
 }
+
+
+
+
+
 
 
 @Composable
