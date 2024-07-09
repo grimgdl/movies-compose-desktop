@@ -1,7 +1,9 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -10,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
@@ -135,14 +138,17 @@ fun CustomTitlebar(onCloseRequest: () -> Unit, window: ComposeWindow) {
             modifier = Modifier.fillMaxWidth()
         ) {
 
-            Text("My Application")
-            IconButton(
-                onClick =  {
+            Text("Movie App Catalog")
+
+            OutlinedButton(
+                onClick = {
                     onCloseRequest()
-                }
+                },
+                shape = RoundedCornerShape(0.dp)
             ){
-                Icon(imageVector = Icons.Filled.Close, contentDescription = null)
+                Icon(imageVector = Icons.Filled.Close, contentDescription = null, tint = Color(0xfff1f1f1))
             }
+
 
         }
 

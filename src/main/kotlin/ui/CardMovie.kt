@@ -15,11 +15,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.awt.Cursor
 
 
 @Composable
@@ -70,7 +73,8 @@ fun CardMovie(
 
                 IconButton(
                     onClick = onClickRemove,
-                    modifier = Modifier.align(alignment = Alignment.TopEnd),
+                    modifier = Modifier.align(alignment = Alignment.TopEnd).
+                    pointerHoverIcon(PointerIcon(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR))),
                 ){
                     Icon(imageVector = Icons.Sharp.Delete,
                         contentDescription = null,
