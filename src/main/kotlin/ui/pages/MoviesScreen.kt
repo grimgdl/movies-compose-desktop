@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -16,8 +17,11 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import getDatabaseBuilder
 import getRoomDatabase
 import kotlinx.coroutines.CoroutineScope
@@ -152,6 +156,7 @@ fun AlertMovies(
     if (dialogShowing){
         Dialog(
             onDismissRequest = {onDismiss()},
+            properties = DialogProperties()
         ) {
             Surface(
                 shape = MaterialTheme.shapes.medium,

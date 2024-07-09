@@ -16,6 +16,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+import ui.CustomTheme
 import ui.pages.LoginScreen
 import ui.pages.MoviesScreen
 import ui.pages.NothingScreen
@@ -26,11 +27,10 @@ import javax.swing.JFrame
 fun App(window: ComposeWindow, onCloseRequest: () -> Unit) {
     var screen by remember { mutableStateOf(Screens.Movies) }
 
-    MaterialTheme {
+    CustomTheme {
 
         Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = Color.DarkGray
+            modifier = Modifier.fillMaxSize()
         ) {
 
             Column{
@@ -112,7 +112,6 @@ fun CustomTitlebar(onCloseRequest: () -> Unit, window: ComposeWindow) {
     Box(
         modifier = Modifier.fillMaxWidth()
             .height(40.dp)
-            .background(Color.DarkGray)
             .padding(horizontal = 8.dp)
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
@@ -136,7 +135,7 @@ fun CustomTitlebar(onCloseRequest: () -> Unit, window: ComposeWindow) {
             modifier = Modifier.fillMaxWidth()
         ) {
 
-            Text("My Application" , color = Color.Gray)
+            Text("My Application")
             IconButton(
                 onClick =  {
                     onCloseRequest()
